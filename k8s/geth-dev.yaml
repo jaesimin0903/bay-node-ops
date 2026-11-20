@@ -36,7 +36,7 @@ spec:
           image: ethereum/client-go:v1.17.5
           args:
             - --dev
-            - --dev.period=12          # 12초마다 블록 생성 (tx가 잠시 txpool에 머무름)
+            - --dev.period=0          # 12초마다 블록 생성 (tx가 잠시 txpool에 머무름)
             - --metrics
             - --metrics.addr=0.0.0.0
             - --metrics.port=6060
