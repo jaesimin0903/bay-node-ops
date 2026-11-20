@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: geth-dev
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: geth-dev
+  endpoints:
+    - port: metrics
+      path: /debug/metrics/prometheus
+      interval: 15s

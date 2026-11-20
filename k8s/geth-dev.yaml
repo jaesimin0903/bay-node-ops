@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: geth-dev
+  labels:
+    app: geth-dev
+spec:
+  selector:
+    app: geth-dev
+  ports:
+    - name: http-rpc
+      port: 8545
+      targetPort: 8545
+    - name: metrics
+      port: 6060
+      targetPort: metrics
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: geth-dev
+spec:
+  serviceName: geth-dev
+  replicas: 1
+  selector:
+    matchLabels:
+      app: geth-dev
+  template:
+    metadata:
+      labels:
+        app: geth-dev
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: geth
+          image: ethereum/client-go:v1.17.4
+          args:
+            - --dev
+            - --dev.period=12          # 12초마다 블록 생성 (tx가 잠시 txpool에 머무름)
+            - --metrics
+            - --metrics.addr=0.0.0.0
+            - --metrics.port=6060
+            - --datadir=/data
+            - --http
+            - --http.addr=0.0.0.0
+            - --http.vhosts=*
+            - --http.api=eth,net,web3,txpool,debug
+          ports:
+            - containerPort: 8545
+              name: http-rpc
+            - containerPort: 6060
+              name: metrics
+          readinessProbe:              # 8545 포트가 열려야 트래픽을 받는다
+            tcpSocket:
+              port: 8545
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+          volumeMounts:
+            - name: chaindata
+              mountPath: /data
+  volumeClaimTemplates:                # 파드가 죽어도 남는 체인 데이터
+    - metadata:
+        name: chaindata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi

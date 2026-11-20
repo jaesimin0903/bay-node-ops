@@ -1,0 +1,9 @@
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 15s
+    evaluationInterval: 15s
+    retention: 2d
+grafana:
+  persistence:
+    enabled: true
+    size: 1Gi
