@@ -33,3 +33,7 @@ kubectl --context kind-bay -n monitoring port-forward svc/monitoring-grafana 330
 초기 비밀번호는 Kubernetes Secret에서 확인한다. 캡처와 저장소에는 남기지 않는다.
 
 이 구성은 로컬 개발 체인용이다. 게임데이에 쓸 클러스터와 PVC는 유지한다.
+
+실습 결과: https://app.notion.com/p/41e4790074c881048c97d71dc165dc02
+
+저장된 원본 검증: `python3 scripts/verify_evidence.py` (로컬 evidence 폴더 필요)
